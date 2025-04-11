@@ -70,7 +70,7 @@ def restore_inactive_student(request, pk, format=None):
         if not student.active:
             student.active = True
             student.save()
-            serializer = StudentSerializer(student) # serializa sem os dados da requisição
+            serializer = StudentSerializer(student)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(

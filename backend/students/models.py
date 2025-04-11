@@ -28,7 +28,6 @@ class Student(models.Model):
                 r"^\d{11}$", message=("Invalid CPF. Must contain exactly 11 digits.")
             )
         ],
-        unique=True,
     )
 
     address = models.CharField(max_length=200)

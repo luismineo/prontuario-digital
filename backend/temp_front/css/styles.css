@@ -1,0 +1,37 @@
+/* Estilos gerais */
+body {
+    background-color: #f8f9fa;
+}
+
+/* Animação para o loader */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilo para campos inválidos */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+/* Ajustes para tabela responsiva */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Botões de ação na tabela */
+.action-btn {
+    margin-right: 5px;
+}
+
+/* Estilo para alertas */
+.alert {
+    margin-bottom: 1rem;
+}
+
+/* Transição para alertas */
+.alert-fade {
+    transition: opacity 0.5s ease-out;
+}
