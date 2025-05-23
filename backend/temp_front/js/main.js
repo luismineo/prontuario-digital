@@ -250,6 +250,8 @@ async function viewStudent(id) {
         const student = currentStudents.find(s => s.id === id) || await api.getStudent(id);
         
         openStudentModal(student);
+        const modalTitle = document.getElementById('modal-title');
+        modalTitle.textContent = 'Visualizar aluno';
         
         // Desabilitar todos os campos para visualização
         document.querySelectorAll('#student-form input, #student-form select').forEach(el => {
