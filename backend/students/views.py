@@ -1,16 +1,18 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import Student
 from .serializers import StudentSerializer
+from authentication.permissions import IsAdminUser
 
 # Create your views here.
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAdminUser])
 def student_list(request, format=None):
     if request.method == "GET":
-        students = Student.objects.filter(active=True)
+        students = Student.objects.filter(active=True).order_by("name")
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data)
 
@@ -23,6 +25,7 @@ def student_list(request, format=None):
 
 
 @api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])
 def student_detail(request, pk, format=None):
     try:
         student = Student.objects.get(pk=pk)
@@ -52,14 +55,16 @@ def student_detail(request, pk, format=None):
 
 
 @api_view(["GET"])
+@permission_classes([IsAdminUser])
 def inactive_student_list(request, format=None):
     if request.method == "GET":
-        students = Student.objects.filter(active=False)
+        students = Student.objects.filter(active=False).order_by("name")
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data)
 
 
 @api_view(["PUT"])
+@permission_classes([IsAdminUser])
 def restore_inactive_student(request, pk, format=None):
     try:
         student = Student.objects.get(pk=pk)

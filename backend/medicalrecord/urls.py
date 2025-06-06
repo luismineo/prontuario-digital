@@ -22,11 +22,20 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from authentication.views import CustomAuthToken
+from rest_framework.routers import DefaultRouter
+from authentication.views import UserViewSet
+
+router = DefaultRouter()
+router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("students.urls")),
+    path("api/auth/", include(router.urls)),
+    path("api/login/", CustomAuthToken.as_view(), name="api_login"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    # documentações
     path(
         "api/docs/",
         SpectacularSwaggerView.as_view(url_name="schema"),

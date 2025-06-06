@@ -4,17 +4,43 @@ class API {
     }
 
     getHeaders() {
-        return {
+        const headers = {
             'Content-Type': 'application/json',
         };
+        // Pega o token do localStorage
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // Adiciona o cabeçalho Authorization se o token existir
+            headers['Authorization'] = `Token ${token}`;
+        }
+        return headers;
     }
 
     async handleResponse(response) {
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || `Erro ${response.status}: ${response.statusText}`);
+        if (response.status === 204) { // Handle No Content (DELETE, PUT sem retorno)
+            return { success: true };
         }
-        return response.json();
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            // Tenta pegar a mensagem de erro do DRF (detail ou non_field_errors)
+            const errorMessage = data.detail || (data.non_field_errors ? data.non_field_errors[0] : `Erro ${response.status}: ${response.statusText}`);
+            console.error("API Error Data:", data); // Log para debug
+            throw new Error(errorMessage);
+        }
+        return data; // Retorna os dados se a resposta for OK
+    }
+
+    async login(email, password) {
+        const response = await fetch(`${this.baseUrl}/api/login/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }, // Login não envia token
+            // IMPORTANTE: Envie o email como 'username' se estiver usando o ObtainAuthToken padrão
+            body: JSON.stringify({ username: email, password: password })
+        });
+        // O handleResponse tratará erros ou retornará os dados (token, user_id, etc.)
+        return this.handleResponse(response);
     }
 
     async getActiveStudents() {

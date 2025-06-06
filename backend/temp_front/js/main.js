@@ -6,16 +6,32 @@ let confirmCallback = null;
 
 // Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. VERIFICA SE ESTÁ LOGADO
+    if (!localStorage.getItem('authToken')) {
+        // Se não houver token, redireciona para a tela de login
+        window.location.href = 'login.html';
+        return; // Para a execução para não carregar o resto
+    }
+
+    // 2. SE ESTIVER LOGADO, INICIALIZA A PÁGINA
+    initializeMainPage();
+});
+
+function initializeMainPage() {
     // Inicializar modais do Bootstrap
     studentModal = new bootstrap.Modal(document.getElementById('student-modal'));
     confirmModal = new bootstrap.Modal(document.getElementById('confirm-modal'));
-    
+
     // Configurar event listeners
     setupEventListeners();
-    
+
     // Carregar alunos ativos inicialmente
     loadActiveStudents();
-});
+
+    // Opcional: Mostrar o email/nome do usuário logado em algum lugar
+    // const userEmail = localStorage.getItem('userEmail');
+    // console.log(`Usuário logado: ${userEmail}`);
+}
 
 // Configurar todos os event listeners
 function setupEventListeners() {
@@ -45,6 +61,8 @@ function setupEventListeners() {
             confirmModal.hide();
         }
     });
+
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
     
     // Validação em tempo real
     const formInputs = document.querySelectorAll('#student-form input, #student-form select');
@@ -68,6 +86,15 @@ function setupEventListeners() {
     document.getElementById('cep').addEventListener('input', function() {
         this.value = formatCEP(this.value);
     });
+}
+
+function handleLogout() {
+    // Remove os dados do localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
+    // Redireciona para a tela de login
+    window.location.href = 'login.html';
 }
 
 // Validar um input específico
@@ -107,6 +134,9 @@ async function loadActiveStudents() {
         hideLoader();
         showAlert(error.message, 'danger');
         console.error('Erro ao carregar alunos ativos:', error);
+        if (error.message.includes('401') || error.message.includes('403') || error.message.includes('Authentication credentials were not provided')) {
+            handleLogout();
+        }
     }
 }
 
