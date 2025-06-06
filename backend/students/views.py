@@ -19,6 +19,7 @@ def student_list(request, format=None):
     if request.method == "POST":
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
+            serializer.save(created_by=request.user, updated_by=request.user)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -39,12 +40,13 @@ def student_detail(request, pk, format=None):
     elif request.method == "PUT":
         serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(updated_by=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == "DELETE":
         if student.active:
+            student.updated_by = request.user
             student.soft_delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
