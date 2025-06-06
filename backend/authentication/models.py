@@ -20,7 +20,7 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
 
-    REQUIRED_FIELDS = ["username", "first_name", "last_name", "role"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "role"]
 
     def __str__(self):
         return self.email
@@ -34,7 +34,9 @@ class HealthProfile(models.Model):
         ("speech_therapist", "Fonoaudiologia"),
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="health_profile"
+    )
     specialty = models.CharField(max_length=100, verbose_name="Especialidade")
     council_number = models.CharField(max_length=20)
 

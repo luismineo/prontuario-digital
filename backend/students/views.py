@@ -3,13 +3,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import Student
 from .serializers import StudentSerializer
-from authentication.permissions import IsAdminUser
+from authentication.permissions import IsAdminUser, AdminWriteHealthProfRead
 
 # Create your views here.
 
 
 @api_view(["GET", "POST"])
-@permission_classes([IsAdminUser])
+@permission_classes([AdminWriteHealthProfRead])
 def student_list(request, format=None):
     if request.method == "GET":
         students = Student.objects.filter(active=True).order_by("name")
